@@ -14,7 +14,8 @@ class ContactController extends Controller
      */
     public function index()
     {
-        //
+        $contacts = Contact::all();
+        return view('contacts.index',compact('contacts'));
     }
 
     /**
@@ -45,6 +46,8 @@ class ContactController extends Controller
             'last_name'=> $request->get('last_name'),
             'email'=> $request->get('email'),
             'company' => $request->get('company'),
+            'city' => $request->get('city'),
+            'country' => $request->get('country'),
         ]);
         $contact->save();
         return redirect('/contacts')->with('success','Contact saved!');
@@ -70,7 +73,8 @@ class ContactController extends Controller
      */
     public function edit($id)
     {
-        //
+        $contact = Contact::find($id);
+        return view('contacts.edit',compact('contact'));
     }
 
     /**
@@ -82,7 +86,22 @@ class ContactController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'first_name'=> 'required',
+            'last_name'=> 'required',
+            'email'=> 'required',
+        ]);
+        $contact =  Contact::find($id);
+        $contact->first_name = $request->get('first_name');
+        $contact->last_name = $request->get('last_name');
+        $contact->email = $request->get('email');
+        $contact->company = $request->get('company');
+        $contact->city = $request->get('city');
+        $contact->country = $request->get('country');
+        $contact->save();
+
+        return redirect('/contacts')->with('success', 'Contact updated');
+      
     }
 
     /**
@@ -93,6 +112,9 @@ class ContactController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $contact = Contact::find($id);
+        $contact->delete();
+
+        return redirect('/contacts')->with('success', 'Contact deleted');
     }
 }
